@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Street Reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Big+Shoulders+Display:wght@800;900&family=Courier+Prime:wght@400;700&family=Permanent+Marker&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: { asphalt:'#101010', charcoal:'#1B1B1B', concrete:'#292929', blood:'#E32636', paper:'#E8E0D0', hazard:'#F5D547' },
+    fontFamily: {
+      display:['"Big Shoulders Display"','Impact','sans-serif'],
+      stencil:['"Saira Stencil One"','Impact','sans-serif'],
+      marker:['"Permanent Marker"','cursive'],
+      mono:['"Courier Prime"','"Courier New"','monospace'],
+      body:['Barlow','system-ui','sans-serif']
+    }
+  } }
+};
+</script>
+
+<style>
+:root{--asphalt:#101010;--charcoal:#1B1B1B;--concrete:#292929;--blood:#E32636;--paper:#E8E0D0;--hazard:#F5D547}
+html{background:var(--asphalt)}
+body{background:var(--asphalt);color:var(--paper);font-family:'Barlow',system-ui,sans-serif;min-height:100vh}
+/* photocopier grain over everything */
+body::before{content:"";position:fixed;inset:0;z-index:55;pointer-events:none;opacity:.08;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* industrial warning tape */
+.hazard{background:repeating-linear-gradient(-45deg,var(--hazard) 0 16px,var(--asphalt) 16px 32px)}
+/* masking tape holding posters up */
+.tape{position:absolute;z-index:2;width:84px;height:26px;background:rgba(245,213,71,.8);box-shadow:0 1px 3px rgba(0,0,0,.5);transform:rotate(var(--tr,-6deg))}
+.tilt{transform:rotate(var(--r,0deg))}
+/* hard offset shadow, like a pasted sticker */
+.slab{box-shadow:5px 5px 0 #000}
+.slab-sm{box-shadow:3px 3px 0 #000}
+.press{transition:transform .08s,box-shadow .08s}
+.press:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+/* ripped paper edge */
+.torn-b{clip-path:polygon(0 0,100% 0,100% 94%,96% 97%,92% 93%,87% 98%,82% 94%,76% 99%,71% 95%,65% 98%,59% 94%,53% 99%,47% 95%,41% 98%,35% 93%,29% 97%,23% 94%,17% 99%,11% 95%,5% 98%,0 94%)}
+.paper-sheet{background:var(--paper);color:var(--asphalt)}
+/* the one orchestrated moment: posters slapped onto the wall */
+@keyframes slap{0%{opacity:0;transform:translateY(-46px) scale(1.18) rotate(calc(var(--r)*2.5))}60%{opacity:1;transform:translateY(0) scale(.97) rotate(var(--r))}100%{opacity:1;transform:rotate(var(--r))}}
+.slap{animation:slap .5s cubic-bezier(.2,.9,.3,1.15) both;animation-delay:calc(var(--i)*.15s)}
+:focus-visible{outline:3px solid var(--hazard);outline-offset:3px}
+input,select,textarea{border-radius:0}
+::selection{background:var(--blood);color:var(--paper)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body class="font-body antialiased">
+<a href="#wall" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-hazard focus:text-asphalt focus:p-2">Skip to the movies</a>
+
+<header class="sticky top-0 z-40 bg-asphalt border-b-4 border-blood">
+  <div class="mx-auto max-w-7xl px-4 py-3 flex items-center gap-x-5 gap-y-1 flex-wrap">
+    <a href="index.html" id="brand" class="font-display font-black uppercase text-3xl leading-none tracking-tight flex items-center">STREET</a>
+    <nav class="ml-auto flex items-center gap-x-5 gap-y-1 flex-wrap font-stencil text-sm uppercase" aria-label="Main">
+      <a href="#wall" class="hover:text-hazard">The wall</a>
+      <a href="cart.php" class="hover:text-hazard">Cart <span id="cartCount" class="inline-block min-w-[1.5rem] text-center bg-hazard text-asphalt font-mono font-bold px-1">0</span></a>
+      <span id="authLinks" class="flex items-center gap-x-5"></span>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="mx-auto max-w-7xl px-4 pt-10 pb-16 lg:pt-16 grid lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-7">
+        <h1 class="font-display font-black uppercase leading-[.82] tracking-tight text-[clamp(3.6rem,11.5vw,9.5rem)]">
+          <span class="block">Fight films</span>
+          <span class="block bg-blood text-paper px-3 -ml-3 w-fit -rotate-1">from the wrong</span>
+          <span class="block">side of town.</span>
+        </h1>
+        <p class="mt-8 max-w-md text-lg text-paper/85">Underground brawlers, outlaw racers, revenge runs and gang wars. Buy a film once and watch it whenever you want.</p>
+        <div class="mt-8 flex flex-wrap items-center gap-5">
+          <a href="#wall" class="bg-blood text-paper font-stencil uppercase text-lg px-6 py-3 slab press">Browse the wall</a>
+          <span class="font-marker text-hazard text-xl -rotate-2">New this week: <span id="heroNew">...</span></span>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 relative h-[380px] sm:h-[500px]" id="heroStack" aria-label="Featured films">
+        <div class="absolute inset-0 grid place-items-center font-mono text-paper/50" id="heroLoading">Loading posters...</div>
+      </div>
+    </div>
+    <div class="hazard h-4"></div>
+  </section>
+
+  <!-- THE WALL -->
+  <section id="wall" class="mx-auto max-w-7xl px-4 py-14 scroll-mt-20">
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+      <h2 class="font-display font-black uppercase leading-[.85] tracking-tight text-6xl md:text-8xl">The wall</h2>
+      <p id="resultCount" class="font-mono text-sm text-paper/70" aria-live="polite"></p>
+    </div>
+
+    <div class="flex flex-wrap gap-3 mb-5">
+      <label class="flex-1 min-w-[220px]">
+        <span class="sr-only">Search movies</span>
+        <input id="search" type="search" placeholder="Search a title, director or tagline" class="w-full bg-charcoal border-2 border-paper/60 px-4 py-3 font-mono placeholder:text-paper/40 focus:border-hazard">
+      </label>
+      <label>
+        <span class="sr-only">Sort movies</span>
+        <select id="sort" class="bg-charcoal border-2 border-paper/60 px-4 py-3 font-mono h-full">
+          <option value="new">Newest on the wall</option>
+          <option value="year">Release year, new to old</option>
+          <option value="old">Release year, old to new</option>
+          <option value="price">Price, low to high</option>
+          <option value="title">Title, A to Z</option>
+        </select>
+      </label>
+    </div>
+    <div id="chips" class="flex flex-wrap gap-2 mb-10" role="group" aria-label="Filter by genre"></div>
+
+    <div id="grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-5 gap-y-12"></div>
+  </section>
+</main>
+
+<footer class="mt-8">
+  <div class="hazard h-4"></div>
+  <div class="mx-auto max-w-7xl px-4 py-8 flex flex-wrap items-center justify-between gap-4 font-mono text-sm text-paper/70">
+    <span id="footBrand" class="font-display font-black uppercase text-2xl text-paper">STREET REEL</span>
+    <span>Demo store. Every film and name here is made up and no real payments are taken.</span>
+  </div>
+</footer>
+
+<div id="toast" role="status" aria-live="polite" class="fixed bottom-4 left-4 z-[60] hidden bg-hazard text-asphalt font-mono font-bold px-4 py-3 slab"></div>
+
+<script>
+const state = { q: '', genre: '', sort: 'new', csrf: '', currency: '$', chipsBuilt: false };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = (n) => state.currency + Number(n).toFixed(2);
+
+async function getJSON(url, opts) {
+  const r = await fetch(url, opts);
+  let data = null; try { data = await r.json(); } catch (_) {}
+  if (!r.ok) { const err = new Error((data && data.error) || 'Request failed'); err.status = r.status; throw err; }
+  return data;
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.remove('hidden');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.add('hidden'), 2600);
+}
+
+function brandMarkup(name) {
+  const [first, ...rest] = name.split(' ');
+  return rest.length
+    ? `<span>${esc(first)}</span><span class="bg-blood text-paper px-2 -rotate-3 inline-block ml-1">${esc(rest.join(' '))}</span>`
+    : `<span>${esc(name)}</span>`;
+}
+
+/* ---------- session: brand, cart count, login state ---------- */
+async function loadSession() {
+  try {
+    const s = await getJSON('api/session.php');
+    state.csrf = s.csrf; state.currency = s.currency;
+    $('#brand').innerHTML = brandMarkup(s.brand);
+    $('#footBrand').textContent = s.brand;
+    document.title = s.brand + ' | ' + s.tagline;
+    $('#cartCount').textContent = s.cart;
+    $('#authLinks').innerHTML = s.user
+      ? `<a href="account.php" class="hover:text-hazard">${esc(s.user.name)}</a>
+         ${s.user.role === 'admin' ? '<a href="admin.php" class="text-hazard hover:underline">Admin</a>' : ''}
+         <form action="logout.php" method="post"><input type="hidden" name="csrf" value="${esc(s.csrf)}"><button class="hover:text-blood uppercase">Log out</button></form>`
+      : `<a href="login.php" class="hover:text-hazard">Log in</a>
+         <a href="register.php" class="bg-blood px-3 py-1 slab-sm press">Sign up</a>`;
+  } catch (e) { serverDown(e); }
+}
+
+function serverDown(e) {
+  $('#grid').innerHTML = `<div class="col-span-full border-4 border-dashed border-blood p-10 text-center">
+    <p class="font-display font-black uppercase text-4xl">Can not reach the server</p>
+    <p class="mt-2 text-paper/80">${esc(e.message)} Make sure Apache and MySQL are running in XAMPP, open this page through http://localhost/ and run install.php once.</p></div>`;
+}
+
+/* ---------- hero: three featured posters slapped on ---------- */
+async function loadHero() {
+  try {
+    const d = await getJSON('api/movies.php?featured=1&limit=3');
+    const slots = [
+      'left-0 top-10 w-[46%]',
+      'left-[26%] top-0 w-[50%] z-10',
+      'right-0 top-16 w-[44%]'
+    ];
+    const tilts = [-7, 3, 8];
+    $('#heroStack').innerHTML = d.movies.slice(0, 3).map((m, i) => `
+      <a href="movie.php?id=${m.id}" class="absolute ${slots[i]} slap block" style="--r:${tilts[i]}deg;--i:${i}" aria-label="${esc(m.title)}, ${money(m.price)}">
+        <span class="tape" style="left:50%;top:-12px;margin-left:-42px;--tr:${tilts[i] * -1}deg"></span>
+        <img src="${esc(m.poster)}" alt="Poster for ${esc(m.title)}" width="600" height="900" class="w-full aspect-[2/3] object-cover border-2 border-paper/30 shadow-[8px_8px_0_#000]">
+      </a>`).join('');
+    if (d.movies[0]) $('#heroNew').textContent = d.movies[0].title;
+  } catch (e) { $('#heroLoading').textContent = ''; }
+}
+
+/* ---------- the wall ---------- */
+function buildChips(genres) {
+  const all = [{ name: 'All', slug: '' }, ...genres];
+  $('#chips').innerHTML = all.map(g =>
+    `<button type="button" data-genre="${esc(g.slug)}" aria-pressed="${state.genre === g.slug}"
+       class="font-stencil uppercase text-sm px-3 py-2 border-2 ${state.genre === g.slug ? 'bg-blood border-blood text-paper' : 'border-paper/60 hover:border-hazard'}">${esc(g.name)}</button>`).join('');
+}
+
+function card(m) {
+  const rot = ((m.id * 37) % 7 - 3) * 0.6;
+  const tr = ((m.id * 53) % 13) - 6;
+  return `<article class="tilt" style="--r:${rot}deg">
+    <a href="movie.php?id=${m.id}" class="block relative">
+      <span class="tape" style="left:50%;top:-12px;margin-left:-42px;--tr:${tr}deg"></span>
+      <img src="${esc(m.poster)}" alt="Poster for ${esc(m.title)}" loading="lazy" width="600" height="900" class="w-full aspect-[2/3] object-cover border-2 border-paper/25 bg-concrete">
+    </a>
+    <div class="mt-3 flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h3 class="font-display font-extrabold uppercase text-xl leading-[.95]"><a href="movie.php?id=${m.id}" class="hover:text-hazard">${esc(m.title)}</a></h3>
+        <p class="font-mono text-xs text-paper/70 mt-1">${m.year}, ${esc(m.genre || 'Unsorted')}</p>
+      </div>
+      <button type="button" data-add="${m.id}" aria-label="Add ${esc(m.title)} to cart" class="shrink-0 bg-hazard text-asphalt font-mono font-bold text-sm px-2 py-1 slab-sm press">Add ${money(m.price)}</button>
+    </div>
+  </article>`;
+}
+
+let reqId = 0;
+async function loadWall() {
+  const id = ++reqId;
+  const params = new URLSearchParams({ q: state.q, genre: state.genre, sort: state.sort });
+  try {
+    const d = await getJSON('api/movies.php?' + params);
+    if (id !== reqId) return; // a newer request already won
+    buildChips(d.genres);
+    $('#resultCount').textContent = d.movies.length + (d.movies.length === 1 ? ' film' : ' films') + ' on the wall';
+    $('#grid').innerHTML = d.movies.length ? d.movies.map(card).join('') : `
+      <div class="col-span-full border-4 border-dashed border-paper/30 p-12 text-center">
+        <p class="font-display font-black uppercase text-4xl">Nothing on the wall matches</p>
+        <p class="mt-2 text-paper/80">Try a different word or pick another genre.</p>
+        <button type="button" id="clear" class="mt-6 bg-blood font-stencil uppercase px-5 py-2 slab-sm press">Clear filters</button>
+      </div>`;
+  } catch (e) { serverDown(e); }
+}
+
+async function addToCart(id) {
+  try {
+    const d = await getJSON('api/cart.php', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf }, body: JSON.stringify({ action: 'add', movie_id: id }) });
+    $('#cartCount').textContent = d.count; toast(d.message);
+  } catch (e) {
+    if (e.status === 401) { location.href = 'login.php?next=index.html'; return; }
+    toast(e.message);
+  }
+}
+
+/* ---------- events ---------- */
+let debounce;
+$('#search').addEventListener('input', (e) => { clearTimeout(debounce); debounce = setTimeout(() => { state.q = e.target.value.trim(); loadWall(); }, 250); });
+$('#sort').addEventListener('change', (e) => { state.sort = e.target.value; loadWall(); });
+$('#chips').addEventListener('click', (e) => { const b = e.target.closest('[data-genre]'); if (!b) return; state.genre = b.dataset.genre; loadWall(); });
+$('#grid').addEventListener('click', (e) => {
+  const add = e.target.closest('[data-add]'); if (add) return addToCart(Number(add.dataset.add));
+  if (e.target.id === 'clear') { state.q = ''; state.genre = ''; $('#search').value = ''; loadWall(); }
+});
+
+loadSession().then(() => { loadHero(); loadWall(); });
+</script>
+</body>
+</html>
